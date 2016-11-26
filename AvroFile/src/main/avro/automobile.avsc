@@ -1,0 +1,10 @@
+{"namespace": "avrofile",
+  "type": "record",
+  "name": "Automobile",
+  "fields": [
+    {"name": "id", "type": "int"},
+    {"name": "markname",  "type": ["string", "null"]},
+    {"name": "modelname",  "type": ["string", "null"]},
+    {"name": "year",  "type": ["int", "null"]}
+  ]
+}
