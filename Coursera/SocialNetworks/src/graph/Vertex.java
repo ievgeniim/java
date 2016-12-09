@@ -8,14 +8,9 @@ import java.util.Set;
  */
 public class Vertex {
 
-    //private int vertexId;
+    private int vertexId;
     private Set<Edge> edges;
 
-    public Vertex() {
-        edges = new HashSet<Edge>();
-    }
-
-    /*
     public Vertex(int vertexId) {
         this.vertexId = vertexId;
         edges = new HashSet<Edge>();
@@ -23,7 +18,7 @@ public class Vertex {
 
     public int getVertexId () {
         return this.vertexId;
-    }*/
+    }
 
     public void addEdge(Vertex destination) {
         edges.add(new Edge(destination));
@@ -33,5 +28,6 @@ public class Vertex {
     public Set<Edge> getEdges() {
         return this.edges;
     }
+
 
 }

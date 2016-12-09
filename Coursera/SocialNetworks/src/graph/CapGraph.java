@@ -27,7 +27,7 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public void addVertex(int num) {
-		this.vertices.put(num, new Vertex());
+		this.vertices.put(num, new Vertex(num));
 	}
 
 	/* (non-Javadoc)
@@ -46,8 +46,29 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public Graph getEgonet(int center) {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<Vertex> egoVertices = new ArrayList<Vertex>();
+		Graph egonet = new CapGraph();
+
+		egonet.addVertex(center);
+		egoVertices.add(vertices.get(center));
+
+		for (Edge e : this.vertices.get(center).getEdges()) {
+			egoVertices.add(e.getDestination());
+			egonet.addVertex(e.getDestination().getVertexId());
+		}
+
+		for (Vertex v : egoVertices) {
+			egonet.addVertex(v.getVertexId());
+
+			for (Edge e : v.getEdges()) {
+				if (egoVertices.contains(e.getDestination())) {
+					egonet.addEdge(v.getVertexId(),e.getDestination().getVertexId());
+				}
+			}
+		}
+
+		return egonet;
 	}
 
 	/* (non-Javadoc)
@@ -80,14 +101,18 @@ public class CapGraph implements Graph {
 
 	public void drawGraph() {
 
-		System.out.print("Graph has " + this.vertices.size() + " vertices and " + this.numberOfEdges + " edges");
+		System.out.println("Graph has " + this.getSize() + " vertices and " + this.numberOfEdges + " edges");
 
 		for (Map.Entry<Integer,Vertex> entry : vertices.entrySet()) {
 			for (Edge e : entry.getValue().getEdges()) {
-				System.out.print("Graph " + entry.getValue() + "is connected to " + e.getDestination());
+				System.out.println("	Vertex " + entry.getKey() + " is connected to " + e.getDestination().getVertexId());
 			}
 		}
 
+	}
+
+	public int getSize() {
+		return  this.vertices.size();
 	}
 
 }
