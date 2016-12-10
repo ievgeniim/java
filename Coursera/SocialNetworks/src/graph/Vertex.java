@@ -29,5 +29,4 @@ public class Vertex {
         return this.edges;
     }
 
-
 }

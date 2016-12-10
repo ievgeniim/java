@@ -76,17 +76,68 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public List<Graph> getSCCs() {
-		// TODO Auto-generated method stub
+
+		Deque<Vertex> vertices = new ArrayDeque<Vertex>();
+
+		for (Vertex v : this.vertices.values()) {
+			vertices.add(v);
+		}
+
+		for (Vertex v : dfs (vertices)) {
+			System.out.print(v.getVertexId() + " ");
+		}
+
 		return null;
 	}
+
+	private Deque<Vertex> dfs(Deque<Vertex> vertices) {
+
+		Set<Vertex> visited = new HashSet<Vertex>();
+		Deque<Vertex> finished = new ArrayDeque<Vertex>();
+
+		Vertex v;
+		while (!vertices.isEmpty()) {
+			v = vertices.pop();
+			if (!visited.contains(v)) {
+				dfsVisit(v,visited,finished);
+			}
+		}
+
+		return finished;
+	}
+
+	private void dfsVisit (Vertex v, Set<Vertex> visited, Deque<Vertex> finished) {
+		visited.add(v);
+
+		for (Edge e: v.getEdges()) {
+			if (!visited.contains(e.getDestination())) {
+				dfsVisit (e.getDestination(), visited, finished);
+			}
+		}
+
+		finished.push(v);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see graph.Graph#exportGraph()
 	 */
 	@Override
 	public HashMap<Integer, HashSet<Integer>> exportGraph() {
-		// TODO Auto-generated method stub
-		return null;
+
+		HashMap<Integer,HashSet<Integer>> graph = new HashMap<Integer,HashSet<Integer>>();
+
+		for (Map.Entry<Integer, Vertex> v : this.vertices.entrySet()) {
+			HashSet<Integer> neighbours = new HashSet<Integer>();
+
+			for(Edge e : v.getValue().getEdges()) {
+				neighbours.add(e.getDestination().getVertexId());
+			}
+
+			graph.put(v.getKey(),neighbours);
+		}
+
+		return graph;
 	}
 
 	/*  Before adding edge we need to be sure that

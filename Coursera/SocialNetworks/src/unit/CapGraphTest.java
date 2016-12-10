@@ -4,6 +4,9 @@ import graph.CapGraph;
 import graph.Graph;
 import util.GraphLoader;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import static org.junit.Assert.*;
 
 /**
@@ -15,28 +18,38 @@ public class CapGraphTest {
     public void setUp() throws Exception {
 
         CapGraph graph = new CapGraph();
-        /*
-        graph.addVertex(1);
-        graph.addVertex(2);
-        graph.addEdge(1,2);
-        graph.addVertex(2);
 
-        graph.addEdge(1,3);
-        graph.addVertex(3);
-        graph.addEdge(1,3);
-        graph.addEdge(3,1);
+        int[] id = {18,23,25,32,44,50,65};
 
-        graph.addEdge(3,2);
-        graph.addEdge(2,3);
+        for (int i : id) {
+            graph.addVertex(i);
+        }
 
-        graph.addEdge(4,3);*/
+        graph.addEdge(32,44);
+        graph.addEdge(32,50);
+        graph.addEdge(44,50);
+        graph.addEdge(18,44);
+        graph.addEdge(18,23);
+        graph.addEdge(23,18);
+        graph.addEdge(23,25);
+        graph.addEdge(25,23);
+        graph.addEdge(25,65);
+        graph.addEdge(65,23);
 
-        GraphLoader.loadGraph(graph,"d:\\Git\\Coursera\\SocialNetworks\\data\\small_test_graph.txt");
-        graph.drawGraph();
+
+        //GraphLoader.loadGraph(graph,"d:\\Git\\Coursera\\SocialNetworks\\data\\small_test_graph.txt");
+        //graph.drawGraph();
 
         Graph ego = new CapGraph();
-        ego = graph.getEgonet(3);
+        ego = graph.getEgonet(23);
 
+        HashMap<Integer,HashSet<Integer>>  roadMap = graph.exportGraph();
+
+        for (int g : roadMap.keySet()) {
+            System.out.println (g + " : " +  roadMap.get(g));
+        }
+
+        graph.getSCCs();
 
     }
 
