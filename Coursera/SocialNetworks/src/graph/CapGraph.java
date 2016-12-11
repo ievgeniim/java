@@ -15,6 +15,8 @@ import java.util.*;
 public class CapGraph implements Graph {
 
 	private Map<Integer,Vertex> vertices;
+	private Set<Vertex> visited;
+
 	private int numberOfEdges;
 
 	public CapGraph() {
@@ -28,6 +30,14 @@ public class CapGraph implements Graph {
 	@Override
 	public void addVertex(int num) {
 		this.vertices.put(num, new Vertex(num));
+	}
+
+
+	/*
+	* Another method to do that from Graph -> Graph
+	 */
+	private void addVertex(Vertex v) {
+		this.vertices.put(v.getVertexId(),v);
 	}
 
 	/* (non-Javadoc)
@@ -77,22 +87,50 @@ public class CapGraph implements Graph {
 	@Override
 	public List<Graph> getSCCs() {
 
-		Deque<Vertex> vertices = new ArrayDeque<Vertex>();
+		List<Graph> sccs = new ArrayList<Graph>();
 
+		// create DQ from existing list of vertices
+		Deque<Vertex> vertices = new ArrayDeque<Vertex>();
 		for (Vertex v : this.vertices.values()) {
 			vertices.add(v);
 		}
 
-		for (Vertex v : dfs (vertices)) {
-			System.out.print(v.getVertexId() + " ");
+		//initialize visited list and run first travel
+		visited = new HashSet<Vertex>();
+		Deque<Vertex> finished = dfs(vertices);
+
+		//create new transposed graph based on current
+		CapGraph transposedGraph = this.dequeToGraph(new ArrayDeque<Vertex>(finished) {
+		}).transposeGraph();
+
+		//clear visited list
+		visited.clear();
+
+		//go second cycle using order from finished DQ and Transposed Vertices
+		while (!finished.isEmpty()) {
+			Vertex vertex = finished.poll();
+			//exclude those that are visited - we need to do that by ID as these are new Objects
+			if (!isVisited(vertex.getVertexId())) {
+				//create new Q from all items in finished sequentially
+				ArrayDeque<Vertex> q = new ArrayDeque<Vertex>();
+				q.add(transposedGraph.vertices.get(vertex.getVertexId()));
+				//get DQ as SCC
+				Deque<Vertex> scc = dfs(q);
+				//puc DQ Vetrices into new graph and add that to List
+				sccs.add(dequeToGraph(scc));
+			}
 		}
 
-		return null;
+		return sccs;
 	}
+
+	/*
+	 * we need to maintane visited as global, to easier splitting into
+	 * scc at the final processing
+	 */
 
 	private Deque<Vertex> dfs(Deque<Vertex> vertices) {
 
-		Set<Vertex> visited = new HashSet<Vertex>();
 		Deque<Vertex> finished = new ArrayDeque<Vertex>();
 
 		Vertex v;
@@ -106,6 +144,7 @@ public class CapGraph implements Graph {
 		return finished;
 	}
 
+
 	private void dfsVisit (Vertex v, Set<Vertex> visited, Deque<Vertex> finished) {
 		visited.add(v);
 
@@ -118,6 +157,41 @@ public class CapGraph implements Graph {
 		finished.push(v);
 	}
 
+	/*	Transform DQ list of vertices into Graph
+	 *
+	 */
+
+	private CapGraph dequeToGraph(Deque<Vertex> vertices) {
+
+		CapGraph graph = new CapGraph();
+
+		while (!vertices.isEmpty()) {
+			graph.addVertex(vertices.poll());
+		}
+
+		return graph;
+	}
+
+	/*	Method returns new Graph which is created
+	 *	based calling graph vertices;
+	 */
+
+	public CapGraph transposeGraph() {
+
+		CapGraph transposed = new CapGraph();
+
+		for (Vertex v : this.vertices.values()) {
+			transposed.addVertex(v.getVertexId());
+		}
+
+		for (Vertex v : this.vertices.values()) {
+			for (Edge e: v.getEdges()) {
+				transposed.addEdge(e.getDestination().getVertexId(),v.getVertexId());
+			}
+		}
+
+		return transposed;
+	}
 
 	/* (non-Javadoc)
 	 * @see graph.Graph#exportGraph()
@@ -147,23 +221,31 @@ public class CapGraph implements Graph {
 		return (this.vertices.containsKey(source) && this.vertices.containsKey(destination));
 	}
 
-	/*  Method to show graph
+
+	/*	Convert this graph map of vertices to
+	 *	deque, to easier ordering
 	 */
+	private Deque<Vertex> getDequeVertices() {
 
-	public void drawGraph() {
+		Deque<Vertex> vertices = new ArrayDeque<Vertex>();
 
-		System.out.println("Graph has " + this.getSize() + " vertices and " + this.numberOfEdges + " edges");
-
-		for (Map.Entry<Integer,Vertex> entry : vertices.entrySet()) {
-			for (Edge e : entry.getValue().getEdges()) {
-				System.out.println("	Vertex " + entry.getKey() + " is connected to " + e.getDestination().getVertexId());
-			}
+		for (Vertex v: this.vertices.values()) {
+			vertices.push(v);
 		}
 
+		return  vertices;
 	}
 
-	public int getSize() {
-		return  this.vertices.size();
+	/*
+	*  Check whether Vertex is visited by it's rather than Object
+	* */
+	private boolean isVisited(int id) {
+		for (Vertex v: this.visited) {
+			if (v.getVertexId() == id) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

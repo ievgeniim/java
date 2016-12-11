@@ -1,11 +1,14 @@
 package unit;
 
 import graph.CapGraph;
+import graph.Edge;
 import graph.Graph;
+import graph.Vertex;
 import util.GraphLoader;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +20,7 @@ public class CapGraphTest {
     @org.junit.Test
     public void setUp() throws Exception {
 
-        CapGraph graph = new CapGraph();
+       CapGraph graph = new CapGraph();
 
         int[] id = {18,23,25,32,44,50,65};
 
@@ -43,13 +46,35 @@ public class CapGraphTest {
         Graph ego = new CapGraph();
         ego = graph.getEgonet(23);
 
+        System.out.println("Normal graph");
         HashMap<Integer,HashSet<Integer>>  roadMap = graph.exportGraph();
 
         for (int g : roadMap.keySet()) {
             System.out.println (g + " : " +  roadMap.get(g));
         }
 
-        graph.getSCCs();
+        System.out.println("Transposed graph");
+
+        HashMap<Integer,HashSet<Integer>>  transposedMap = graph.transposeGraph().exportGraph();
+
+        for (int g : transposedMap.keySet()) {
+            System.out.println (g + " : " +  transposedMap.get(g));
+        }
+
+        System.out.println("SCCs");
+        List<Graph> sccs = graph.getSCCs();
+
+        HashMap<Integer,HashSet<Integer>>  sccMap;
+
+        for (Graph g : sccs) {
+            System.out.println("=========");
+            sccMap = g.exportGraph();
+            for (int i : sccMap.keySet()) {
+                System.out.println (i + " : " +  sccMap.get(i));
+            }
+        }
+
+
 
     }
 
