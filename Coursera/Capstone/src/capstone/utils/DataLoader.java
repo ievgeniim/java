@@ -1,8 +1,10 @@
 package capstone.utils;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
 
 /**
  * Created by Ievgenii Martynenko on 14.12.2016.
@@ -12,19 +14,82 @@ import java.util.HashSet;
 
 public final class DataLoader {
 
-    public static HashMap<Integer,ArrayList<String>> loadAirports() {
+    private static final String delim = ",";
+    private static final String airportsFile = "resources/airports.csv";
+    private static final String airlinesFile = "resources/airlines.csv";
+    private static final String routesFile = "resources/routes.csv";
 
-        return new HashMap<>();
+    /**
+     * @desc Reads all rows and columns (except last 4) from airports files
+     * @return A map with list of Airports where airportId is a key and all other values are ArrayList
+     * @throws NumberFormatException
+     * @throws IOException
+     */
+
+    public static HashMap<Integer,ArrayList<String>> loadAirports() throws NumberFormatException, IOException {
+
+        HashMap<Integer,ArrayList<String>> airports = new HashMap<Integer,ArrayList<String>>();
+        String line = "";
+        BufferedReader bf = new BufferedReader(new FileReader(airportsFile));
+
+        while ((line = bf.readLine()) != null) {
+            String tokens[] = line.split(delim);
+            int key = Integer.parseInt(tokens[0]);
+
+            ArrayList<String> values = new ArrayList<String>();
+
+            for (int i = 1; i < tokens.length-4; i++ ) {
+                values.add(tokens[i]);
+            }
+            airports.put(key,values);
+        }
+
+        return new HashMap<Integer,ArrayList<String>>(airports);
     }
 
-    public static HashMap<Integer,ArrayList<String>> loadAirlines() {
+    /**
+     * @desc Reads all rows and two first columns from airlinesFile
+     * @return A map with list of airlines where airlineId is a key and name is value
+     * @throws NumberFormatException
+     * @throws IOException
+     */
 
-        return new HashMap<>();
+    public static HashMap<Integer,String> loadAirlines() throws NumberFormatException, IOException{
+
+        HashMap<Integer,String> airlines = new HashMap<Integer,String>();
+        String line = "";
+        BufferedReader bf = new BufferedReader(new FileReader(airlinesFile));
+
+        while ((line = bf.readLine()) != null) {
+            String tokens[] = line.split(delim);
+            airlines.put(Integer.parseInt(tokens[0]),tokens[1]);
+        }
+
+        return new HashMap<Integer,String>(airlines);
     }
 
-    public static HashSet<ArrayList<String>> loadRoutes() {
+    /**
+     * @desc Reads all rows and 2, 4, 6 columns from routes (which are airlineId, source and destination)
+     * @return A map with list of routes, where source is key but destinationId and airportId are wrapped into Storage
+     * @throws NumberFormatException
+     * @throws IOException
+     */
 
-        return new HashSet<>();
+    public static HashMap<Integer,RouteStorage> loadRoutes() throws NumberFormatException, IOException {
+
+        HashMap<Integer,RouteStorage> routes = new HashMap<Integer,RouteStorage>();
+        String line = "";
+        BufferedReader bf = new BufferedReader(new FileReader(routesFile));
+
+        while ((line = bf.readLine()) != null) {
+            if (!line.contains("\\N")) {
+                String tokens[] = line.split(delim);
+                routes.put(Integer.parseInt(tokens[3]),
+                        new RouteStorage(Integer.parseInt(tokens[5]), Integer.parseInt(tokens[1])));
+            }
+        }
+
+        return new  HashMap<Integer,RouteStorage>(routes);
     }
 
 }
