@@ -3,7 +3,6 @@ package capstone.utils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 
 /**
@@ -38,10 +37,11 @@ public final class DataLoader {
 
             ArrayList<String> values = new ArrayList<String>();
 
-            for (int i = 1; i < tokens.length-4; i++ ) {
+            for (int i = 1; i < tokens.length - 4; i++) {
                 values.add(tokens[i]);
             }
-            airports.put(key,values);
+            airports.put(key, values);
+
         }
 
         return new HashMap<Integer,ArrayList<String>>(airports);
@@ -62,7 +62,8 @@ public final class DataLoader {
 
         while ((line = bf.readLine()) != null) {
             String tokens[] = line.split(delim);
-            airlines.put(Integer.parseInt(tokens[0]),tokens[1]);
+            airlines.put(Integer.parseInt(tokens[0]), tokens[1]);
+
         }
 
         return new HashMap<Integer,String>(airlines);
@@ -75,21 +76,20 @@ public final class DataLoader {
      * @throws IOException
      */
 
-    public static HashMap<Integer,RouteStorage> loadRoutes() throws NumberFormatException, IOException {
+    public static HashMap<RouteStorage,Integer> loadRoutes() throws NumberFormatException, IOException {
 
-        HashMap<Integer,RouteStorage> routes = new HashMap<Integer,RouteStorage>();
+        HashMap<RouteStorage,Integer> routes = new HashMap<RouteStorage,Integer>();
         String line = "";
         BufferedReader bf = new BufferedReader(new FileReader(routesFile));
 
         while ((line = bf.readLine()) != null) {
             if (!line.contains("\\N")) {
                 String tokens[] = line.split(delim);
-                routes.put(Integer.parseInt(tokens[3]),
-                        new RouteStorage(Integer.parseInt(tokens[5]), Integer.parseInt(tokens[1])));
+                routes.put(new RouteStorage(Integer.parseInt(tokens[3]), Integer.parseInt(tokens[5])),Integer.parseInt(tokens[1]));
             }
         }
 
-        return new  HashMap<Integer,RouteStorage>(routes);
+        return new  HashMap<RouteStorage,Integer>(routes);
     }
 
 }

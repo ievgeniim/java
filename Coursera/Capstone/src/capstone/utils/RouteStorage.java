@@ -6,22 +6,22 @@ package capstone.utils;
 
 public class RouteStorage {
 
+    private int sourceId;
     private int destinationId;
-    private int airlineId;
 
-    public RouteStorage(int destinationId, int airlineId) throws NumberFormatException{
+    public RouteStorage(int sourceId, int destinationId) throws NumberFormatException{
 
-        this.airlineId = airlineId;
+        this.sourceId = sourceId;
         this.destinationId = destinationId;
 
     }
 
-    public int getDestinationId() {
-        return destinationId;
+    public int getSourceId() {
+        return sourceId;
     }
 
-    public int getAirlineId() {
-        return airlineId;
+    public int getDestinationId() {
+        return destinationId;
     }
 
 }

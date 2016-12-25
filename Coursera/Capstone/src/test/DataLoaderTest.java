@@ -5,7 +5,6 @@ import capstone.utils.DataLoader;
 import capstone.utils.RouteStorage;
 
 import java.io.IOException;
-import java.lang.instrument.Instrumentation;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class DataLoaderTest {
 
         HashMap<Integer,ArrayList<String>> airports = null;
         HashMap<Integer,String> airlines = null;
-        HashMap<Integer,RouteStorage> routes = null;
+        HashMap<RouteStorage,Integer> routes = null;
 
         try {
             startTime = System.currentTimeMillis();
