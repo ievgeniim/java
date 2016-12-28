@@ -1,6 +1,8 @@
 package test;
 
+import capstone.graph.Airflow;
 import capstone.graph.AirflowMap;
+import capstone.graph.Airport;
 import capstone.utils.DataLoader;
 import capstone.utils.RouteStorage;
 
@@ -9,6 +11,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Ievgenii Martynenko on 24.12.2016.
@@ -51,7 +54,6 @@ public class AirflowMapTest {
         endTime = System.currentTimeMillis();
         System.out.println("Airports loaded onto Map: " + formatter.format((endTime - startTime)/1000d) + " seconds.");
 
-
         HashMap<RouteStorage,Integer> routes = DataLoader.loadRoutes();
 
         System.out.println("Loading Routes onto Map");
@@ -65,9 +67,24 @@ public class AirflowMapTest {
         endTime = System.currentTimeMillis();
         System.out.println("Routes loaded onto Map: " + formatter.format((endTime - startTime)/1000d) + " seconds.");
 
+        System.out.println("Getting largest sets of airports");
+        startTime = System.currentTimeMillis();
 
-        mainMap.getAirportEgonet(1);
+        AirflowMap largestSet = mainMap.getLargestSetOfAirports();
+        endTime = System.currentTimeMillis();
 
+        System.out.println("Largest set has: " + largestSet.getNumberOfAirports() + " airports and " + largestSet.getNumberOfRoutes() + " routes.");
+        System.out.println("Largest set loaded: " + formatter.format((endTime - startTime)/1000d) + " seconds.");
+
+
+        System.out.println("Getting Greedy dominant set");
+        startTime = System.currentTimeMillis();
+
+        Set<Airport> dominants = mainMap.getGreedyDominantSet();
+        endTime = System.currentTimeMillis();
+
+        System.out.println("Greedy dominant set has : " + dominants.size() + " airports.");
+        System.out.println("Greedy algorithm completed in : " + formatter.format((endTime - startTime)/1000d) + " seconds.");
 
     }
 }

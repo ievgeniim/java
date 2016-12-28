@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 public class Airport {
 
+
     private int airportId;
     private String airportName;
     private String airportCity;
@@ -22,10 +23,13 @@ public class Airport {
     private HashSet<Route> routes;
     private HashSet<Airport> neighbours;
 
-    public Airport(int id, ArrayList<String> details) {
-
+    public Airport() {
         this.routes = new HashSet<Route>();
         this.neighbours = new HashSet<Airport>();
+    }
+
+    public Airport(int id, ArrayList<String> details) {
+        this();
 
         this.airportId = id;
 
@@ -38,6 +42,21 @@ public class Airport {
         this.airportLattitude = Float.parseFloat(details.get(5));
         this.airportLongtitude = Float.parseFloat(details.get(6));
 
+    }
+
+    public Airport(Airport a) {
+        this();
+
+        this.airportId = a.getAirportId();
+
+        this.airportName = a.getAirportDetails().get(0);
+        this.airportCity = a.getAirportDetails().get(1);
+        this.airportCountry = a.getAirportDetails().get(2);
+        this.airportFfa = a.getAirportDetails().get(3);
+        this.airportIcao = a.getAirportDetails().get(4);
+
+        this.airportLattitude = Float.parseFloat(a.getAirportDetails().get(5));
+        this.airportLongtitude = Float.parseFloat(a.getAirportDetails().get(6));
     }
 
     public void addRoute(Route route) {
@@ -67,20 +86,6 @@ public class Airport {
 
         return details;
     }
-
-    /*
-    public HashMap<Integer,Airport> getNeighbours() {
-
-        HashMap<Integer,Airport> neighbours = new HashMap<Integer,Airport>();
-
-        for (Airport n : this.neighbours) {
-            neighbours.put(n.getAirportId(),n);
-        }
-
-        return new HashMap<Integer,Airport>(neighbours);
-
-    }
-    */
 
     public HashSet<Route> getRoutes() {
         return this.routes;
