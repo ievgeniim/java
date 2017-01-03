@@ -91,6 +91,4 @@ public class Airport {
         return this.routes;
     }
 
-    //getDistance(Airport airport)
-
 }

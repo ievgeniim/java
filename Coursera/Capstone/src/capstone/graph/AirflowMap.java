@@ -1,5 +1,7 @@
 package capstone.graph;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.*;
 
 /**
@@ -96,27 +98,13 @@ public class AirflowMap implements Airflow {
         return largestSet;
     }
 
-
     /**
-     * @return sum of routes for all Airports on map
-     */
-
-    public int getNumberOfRoutes() {
-        int routesSum = 0;
-
-        for (Airport a : this.airports.values()) {
-            routesSum += a.getRoutes().size();
-        }
-
-        return routesSum;
-    }
-
-    /**
-     *
+     * Uses one of the implementation of Greedy Algorithm to traverse through
+     * the Airports and find the dominant set
      * @return
      */
 
-    public HashSet<Airport> getGreedyDominantSet() {
+    public HashSet<Airport> getDominantSet() {
 
         Set<Airport> dominantAirports = new HashSet<Airport>();
         Set<Airport> airportsToCheck = convertMapToSet(this.airports.values());
@@ -145,10 +133,47 @@ public class AirflowMap implements Airflow {
     }
 
 
+    /**
+     *
+     * @param airlineId
+     * @return a set of all routes for specified Airline Id on current map
+     */
+    public HashSet<Route> getAirlineRoute(int airlineId) {
+        return getAirlineRoute(this.airlines.get(airlineId));
+    }
+
+    /**
+     * @return count of airlines on map
+     */
+    public int getNumberOfAirlines() {
+        return this.airlines.size();
+    }
+
+    /**
+     * @return sum of routes for all Airports on map
+     */
+
+    public int getNumberOfRoutes() {
+        int routesSum = 0;
+
+        for (Airport a : this.airports.values()) {
+            routesSum += a.getRoutes().size();
+        }
+
+        return routesSum;
+    }
+
+    /**
+     * @return count of airports on map
+     */
     public int getNumberOfAirports() {
         return this.airports.size();
     }
 
+    /**
+     * @param airport
+     * @return a ego-map which is a submap of current with list of airports/routes/airlines for listed Airport
+     */
     private AirflowMap getAirportEgonet(Airport airport) {
 
         Set<Airport> airports = new HashSet<Airport>();
@@ -175,23 +200,67 @@ public class AirflowMap implements Airflow {
         return airportEgonet;
     }
 
+    /**
+     * Helper method
+     * @param airportId
+     * @return true if Airport is already put into the map
+     */
     private boolean checkAirportIsOnMap(int airportId) {
         return this.airports.containsKey(airportId);
     }
 
+    /**
+     * Helper method
+     * @param airlineId
+     * @return true if Airline is already put into the map
+     */
     private boolean checkAirlineIsOnMap(int airlineId) {
         return this.airlines.containsKey(airlineId);
     }
 
-    private HashSet<Airport> convertMapToSet(Collection<Airport> airports) {
-        Set<Airport> set = new HashSet<Airport>();
+    /**
+     * Helper method. Generic to convert Map (K,V) -> Set(V) for all types of object used in this class
+     * @param collection
+     * @param <T>
+     * @return HashSet of Object Type.
+     */
+    private <T> HashSet<T> convertMapToSet(Collection<T> collection) {
+        Set<T> set = new HashSet<T>();
 
-        for (Airport a : this.airports.values()) {
-            if (!a.getRoutes().isEmpty()) {
-                set.add(a);
+        for (T obj : collection) {
+            if (obj instanceof Airport) {
+                if (!(((Airport) obj).getRoutes().isEmpty()))  {
+                    set.add(obj);
+                }
+            } else {
+                set.add(obj);
             }
         }
-        return new HashSet<Airport>(set);
+
+        return new <T> HashSet<T>(set);
     }
 
+    /**
+     * Helper method
+     * @param airline
+     * @return a set of all routes for specified Airline object on current map
+     */
+    @Contract("_ -> !null")
+    private HashSet<Route> getAirlineRoute(Airline airline) {
+
+        Set<Route> mapRoutes = new HashSet<Route>();
+        Set<Route> airlineRoutes = new HashSet<Route>();
+
+        for (Airport a : this.airports.values()) {
+            mapRoutes.addAll(a.getRoutes());
+        }
+
+        for (Route route : mapRoutes) {
+            if (route.getRouteOwner().compareTo(airline) == 0) {
+                airlineRoutes.add(route);
+            }
+        }
+
+        return new HashSet<Route>(airlineRoutes);
+    }
 }

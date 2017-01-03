@@ -28,6 +28,5 @@ public class Route {
         return sourceAirport;
     }
 
-    // getDistance()
 }
 
