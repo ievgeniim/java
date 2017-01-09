@@ -1,7 +1,5 @@
 package capstone.graph;
 
-import org.jetbrains.annotations.Contract;
-
 import java.util.*;
 
 /**
@@ -245,7 +243,6 @@ public class AirflowMap implements Airflow {
      * @param airline
      * @return a set of all routes for specified Airline object on current map
      */
-    @Contract("_ -> !null")
     private HashSet<Route> getAirlineRoute(Airline airline) {
 
         Set<Route> mapRoutes = new HashSet<Route>();
